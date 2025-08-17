@@ -1,33 +1,31 @@
 package com.ayman.nindemo.controller;
 
 import com.ayman.nindemo.constant.ApiRoutes;
+import com.ayman.nindemo.model.dto.request.NinListRequest;
 import com.ayman.nindemo.model.dto.request.UpdateNinRequest;
 import com.ayman.nindemo.model.dto.response.ApiResponse;
 import com.ayman.nindemo.model.dto.response.NinResponse;
 import com.ayman.nindemo.model.entity.NIN;
 import com.ayman.nindemo.service.NinService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-// injection *
-// response status
-// @NinValidator *
-// Search the @Sl4j and logger interface
-// Custom header
-// Nin name
-@RequiredArgsConstructor
+
 @RequestMapping(ApiRoutes.NIN)
 @RestController
 public class NinController {
 
     private final NinService ninService;
 
+    public NinController(NinService ninService) {
+        this.ninService = ninService;
+    }
+
     @PostMapping(headers = "X-API-Version=1")
-    public ResponseEntity<ApiResponse> addNins(@RequestBody List<String> nins){
+    public ResponseEntity<ApiResponse> addNins(@Valid @RequestBody NinListRequest nins){
         ninService.addMultipleNins(nins);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Valid nins added successfully"));
     }

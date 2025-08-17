@@ -1,32 +1,33 @@
 package com.ayman.nindemo.service;
 
+import com.ayman.nindemo.model.dto.request.NinListRequest;
 import com.ayman.nindemo.model.dto.request.UpdateNinRequest;
 import com.ayman.nindemo.model.dto.response.NinResponse;
 import com.ayman.nindemo.model.entity.NIN;
 import com.ayman.nindemo.repository.NinRepository;
-import com.ayman.nindemo.validation.validator.NinValidator;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class NinService {
-    private final NinRepository ninRepository;
 
-    public void addMultipleNins(List<String> nins) {
-        for (String nin : nins) {
-            if (validateNin(nin)) {
-                NIN validNIN = new NIN(null, nin);
-                ninRepository.save(validNIN);
-                log.info("Nin: {} added to the database", validNIN);
-            }
+    private final NinRepository ninRepository;
+    private static final Logger log = LoggerFactory.getLogger(NinService.class);
+
+    public NinService(NinRepository ninRepository) {
+        this.ninRepository = ninRepository;
+    }
+
+    public void addMultipleNins(NinListRequest nins) {
+        for (String nin : nins.getNins()) {
+            NIN validNIN = new NIN(null, nin);
+            ninRepository.save(validNIN);
+            log.info("Nin: {} added to the database", validNIN.getNin());
         }
     }
 
@@ -47,7 +48,6 @@ public class NinService {
         NIN1.setNin(updateNinRequest.getNin());
         ninRepository.save(NIN1);
         log.info("Nin with the id: {} updated to: {}", updateNinRequest.getNinId(), updateNinRequest.getNin());
-
     }
 
     public void deleteNin(Long ninId) {
@@ -64,16 +64,9 @@ public class NinService {
                 ));
     }
 
-    private List<NinResponse> toNinResponse(List<NIN> NINS){
+    private List<NinResponse> toNinResponse(List<NIN> NINS) {
         List<NinResponse> ninResponses = new ArrayList<>();
-        for(NIN nin : NINS) ninResponses.add(new NinResponse(nin.getId(), nin.getNin()));
+        for (NIN nin : NINS) ninResponses.add(new NinResponse(nin.getId(), nin.getNin()));
         return ninResponses;
-    }
-
-    public boolean validateNin(String nin){
-        return (nin.length() == 10
-                && ((nin.charAt(0) == '1') || (nin.charAt(0) == '2'))
-                && (!ninRepository.findNinByNin(nin).isPresent())
-        );
     }
 }

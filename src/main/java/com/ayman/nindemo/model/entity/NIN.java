@@ -4,7 +4,7 @@ import com.ayman.nindemo.validation.annotation.ValidateNin;
 import lombok.*;
 
 import javax.persistence.*;
-
+// Search sequense and table
 @Getter
 @Setter
 @NoArgsConstructor

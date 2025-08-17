@@ -3,7 +3,7 @@ package com.ayman.nindemo.model.dto.request;
 import com.ayman.nindemo.validation.annotation.ValidateNin;
 import lombok.Data;
 
-    import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull;
 
 @Data
 public class UpdateNinRequest {
